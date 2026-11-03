@@ -5,7 +5,7 @@ import matplotlib.ticker as mtick
 import matplotlib.dates as mdates
 
 # Data
-pay_classes = ["APS3", "APS4", "APS5", "APS6", "EL1", "EL2 L", "EL2 U"]
+pay_classes = ["APS2", "APS3", "APS4", "APS5", "APS6", "EL1", "EL2 L", "EL2 U"]
 
 df = pd.read_excel("fortnightly_pay.xlsx",
         sheet_name="Fortnightly Pay",
@@ -55,13 +55,31 @@ for inflation_index in index_dict.keys():
     for a in axes.ravel():
         a.set_xlim(xmin, xmax)
 
+    cutoff = pd.Timestamp("2026-03-12")
+
     for pay_level, ax in zip(pay_classes, axes.ravel()):
         print("plotting", pay_level)
-        df[f"{pay_level} Fortnightly Pay with " + inflation_index].plot(
-            ax=ax, label=f"Inflation adjusted ({inflation_index})"
+
+        def plot_series(series, label, color, linestyle="-"):
+            before = series[series.index <= cutoff]
+            after = series[series.index > cutoff]
+
+            if not before.empty:
+                ax.plot(before.index, before.values, color=color, linewidth=2,
+                        linestyle=linestyle, label=label)
+            if not after.empty:
+                ax.plot(after.index, after.values, color=color, linewidth=2,
+                        linestyle=":", label="_nolegend_")
+
+        plot_series(
+            df[f"{pay_level} Fortnightly Pay with " + inflation_index],
+            f"Inflation adjusted ({inflation_index})",
+            color="#1f77b4",
         )
-        df[f"{pay_level} Fortnightly Pay"].plot(
-            ax=ax, label="Actual pay"
+        plot_series(
+            df[f"{pay_level} Fortnightly Pay"],
+            "Actual pay",
+            color="#d62728",
         )
 
         years = pd.date_range(xmin, xmax, freq='YS')
@@ -74,18 +92,19 @@ for inflation_index in index_dict.keys():
         ax.grid(alpha=0.5)
         ax.set_title(pay_level, fontsize=14)
 
+        ax.plot([], [], color='k', linestyle=':', linewidth=2,
+                label='projected based on APSC officer 10/2026 \n and RBA Outlook 11/2026')
         ax.legend(loc='upper left', frameon=False, fontsize=10)
 
-        
         ax.text(
-                .02, .65,
+                .02, .55,
                 'Total Cumulative Difference=${:,.0f}'.format(
                     df[f"{pay_level} cumulative difference"].iloc[-1]
                 ),
                 transform=ax.transAxes, fontsize=11
             )
 
-    fig.delaxes(axes[3, 1])
+    # fig.delaxes(axes[3, 1])
     fig.savefig(f'inflation_adjusted_pay_comparison_' + inflation_index + '.png', bbox_inches='tight', dpi=300)
 
 
