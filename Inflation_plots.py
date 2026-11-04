@@ -93,7 +93,7 @@ for inflation_index in index_dict.keys():
         ax.set_title(pay_level, fontsize=14)
 
         ax.plot([], [], color='k', linestyle=':', linewidth=2,
-                label='projected based on APSC officer 10/2026 \n and RBA Outlook 11/2026')
+                label='projected based on APSC offer 10/2026 \n and RBA Outlook 11/2026')
         ax.legend(loc='upper left', frameon=False, fontsize=10)
 
         ax.text(
