@@ -74,12 +74,12 @@ for inflation_index in index_dict.keys():
         plot_series(
             df[f"{pay_level} Fortnightly Pay with " + inflation_index],
             f"Inflation adjusted ({inflation_index})",
-            color="#1f77b4",
+            color="#d62728",
         )
         plot_series(
             df[f"{pay_level} Fortnightly Pay"],
             "Actual pay",
-            color="#d62728",
+            color="#1f77b4",
         )
 
         years = pd.date_range(xmin, xmax, freq='YS')
