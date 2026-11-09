@@ -100,7 +100,7 @@ for inflation_index in index_dict:
         differs = (cpsu_pay != df[f"{pay_level} Fortnightly Pay"]).to_numpy()
         if differs.any():
             cpsu_pay.iloc[:max(differs.argmax() - 1, 0)] = float("nan")
-        plot_series(cpsu_pay, "CPSU claim of 5%, 5%, 5% per year", color="tab:red",
+        plot_series(cpsu_pay, "CPSU claim of 5.0%, 5.0%, 5.0% per year", color="tab:red",
                     dotted_projection=False)
 
         years = pd.date_range(xmin, xmax, freq='YS')
@@ -117,8 +117,7 @@ for inflation_index in index_dict:
                 label='projected inflation (RBA Outlook 11/2026)')
         ax.legend(loc='upper left', frameon=False, fontsize=10)
 
-        ax.text(
-                .02, .45,
+        ax.text(.42, .2,
                 'APSC Total Cumulative Difference=${:,.0f}'.format(
                     df[f"{pay_level} cumulative difference"].iloc[-1]
                 ),
@@ -127,7 +126,7 @@ for inflation_index in index_dict:
 
         cpsu_cum = (df[f"{pay_level} Fortnightly Pay with " + inflation_index]
                     - cpsu[f"{pay_level} Fortnightly Pay"]).sum()
-        ax.text(.02, .38, f'CPSU Total Cumulative Difference=${cpsu_cum:,.0f}',
+        ax.text(.42, .12, f'CPSU Total Cumulative Difference=${cpsu_cum:,.0f}',
                 transform=ax.transAxes, fontsize=11)
 
     # fig.delaxes(axes[3, 1])
