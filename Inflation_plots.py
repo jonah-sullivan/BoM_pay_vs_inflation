@@ -19,6 +19,7 @@ def read_pay_csv(path):
 
 df = read_pay_csv("Fortnightly Pay - APSC.csv")     # actual pay + CPI/SLCI
 cpsu = read_pay_csv("Fortnightly Pay - CPSU.csv")   # CPSU scenario pay
+apsc = read_pay_csv("Fortnightly Pay - APSC.csv")   # APSC scenario pay
 
 
 index_dict = {'SLCI': 'Fortnightly SLCI', 'CPI': 'Fortnightly CPI'}
@@ -90,7 +91,7 @@ for inflation_index in index_dict:
         )
         plot_series(
             df[f"{pay_level} Fortnightly Pay"],
-            "APSC offer of 3.2%, 3.0%, 2.8% per year",
+            "APSC offer of 3.2%, 3.0%, 2.8% per year plus 0.5% equalisation",
             color="tab:green",
             dotted_projection=False,
         )
@@ -113,20 +114,18 @@ for inflation_index in index_dict:
         ax.grid(alpha=0.5)
         ax.set_title(pay_level, fontsize=14)
 
-        ax.plot([], [], color='k', linestyle=':', linewidth=2,
+        ax.plot([], [], color='tab:blue', linestyle=':', linewidth=2,
                 label='projected inflation (RBA Outlook 11/2026)')
         ax.legend(loc='upper left', frameon=False, fontsize=10)
 
-        ax.text(.42, .2,
-                'APSC Total Cumulative Difference=${:,.0f}'.format(
-                    df[f"{pay_level} cumulative difference"].iloc[-1]
-                ),
-                transform=ax.transAxes, fontsize=11
-            )
+        apsc_cum = (df[f"{pay_level} Fortnightly Pay with " + inflation_index]
+                    - apsc[f"{pay_level} Fortnightly Pay"]).sum()
+        ax.text(.32, .1, f'APSC Difference From CPI Adjusted Pay=${apsc_cum:,.0f}',
+                transform=ax.transAxes, fontsize=11)
 
         cpsu_cum = (df[f"{pay_level} Fortnightly Pay with " + inflation_index]
                     - cpsu[f"{pay_level} Fortnightly Pay"]).sum()
-        ax.text(.42, .12, f'CPSU Total Cumulative Difference=${cpsu_cum:,.0f}',
+        ax.text(.32, .02, f'CPSU Difference From CPI Adjusted Pay=${cpsu_cum:,.0f}',
                 transform=ax.transAxes, fontsize=11)
 
     # fig.delaxes(axes[3, 1])
